@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Student Performance &amp; Attendance — Capstone Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#152238;
+    --navy-soft:#1E304C;
+    --parchment:#F1E9D8;
+    --parchment-dim:#E7DCC5;
+    --ink:#2A2116;
+    --gold:#C9A66B;
+    --red:#A83232;
+    --sage:#5F7A56;
+    --sage-bg:#EAF0E4;
+    --serif: 'Lora', Georgia, serif;
+    --mono: 'IBM Plex Mono', 'Courier New', monospace;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top: env(safe-area-inset-top, 0px);}
+  body{
+    margin:0;
+    background:var(--navy);
+    color:var(--ink);
+    font-family:var(--serif);
+    line-height:1.5;
+  }
+  .cover{
+    background:
+      radial-gradient(1200px 500px at 15% -10%, #223257 0%, transparent 60%),
+      var(--navy);
+    color:var(--parchment);
+    padding:5.5rem 1.5rem 4rem;
+    position:relative;
+    border-bottom:6px solid var(--gold);
+  }
+  .cover-inner{max-width:760px;margin:0 auto;}
+  .cover .kicker{
+    font-family:var(--mono);
+    font-size:0.8rem;
+    letter-spacing:0.02em;
+    color:var(--gold);
+    margin:0 0 1.1rem;
+  }
+  .cover h1{
+    font-size:clamp(2.1rem, 5vw, 3.1rem);
+    font-weight:600;
+    line-height:1.15;
+    margin:0 0 1rem;
+    max-width:14ch;
+  }
+  .cover p.lede{
+    font-size:1.08rem;
+    max-width:56ch;
+    color:#D9CFB8;
+    margin:0 0 2.2rem;
+  }
+  .meta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1.75rem;
+    font-family:var(--mono);
+    font-size:0.82rem;
+    color:#B9AF98;
+    border-top:1px solid #33456A;
+    padding-top:1.3rem;
+  }
+  .meta-row div span{display:block;color:var(--parchment);font-size:0.9rem;margin-top:0.15rem;}
+
+  main{background:var(--parchment);}
+  .page{max-width:760px;margin:0 auto;padding:3.4rem 1.5rem;}
+  .page + .page{border-top:1px solid var(--parchment-dim);}
+
+  h2.section-title{
+    font-size:1.5rem;
+    font-weight:600;
+    margin:0 0 0.4rem;
+    display:flex;
+    align-items:baseline;
+    gap:0.6rem;
+  }
+  h2.section-title .n{
+    font-family:var(--mono);
+    color:var(--gold);
+    font-size:1rem;
+    border:1px solid var(--gold);
+    border-radius:2px;
+    width:1.7rem;height:1.7rem;
+    display:inline-flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .section-sub{
+    color:#5B5140;
+    font-size:0.98rem;
+    margin:0 0 1.8rem;
+    max-width:62ch;
+  }
+
+  /* pipeline ledger */
+  .stage-list{list-style:none;margin:0;padding:0;}
+  .stage{
+    display:grid;
+    grid-template-columns:2.4rem 1fr;
+    gap:0.9rem;
+    padding:1rem 0;
+    border-bottom:1px dashed #D3C6A6;
+  }
+  .stage:last-child{border-bottom:none;}
+  .stage .num{
+    font-family:var(--mono);
+    font-weight:600;
+    color:var(--navy);
+    font-size:1.3rem;
+  }
+  .stage h3{margin:0 0 0.2rem;font-size:1.05rem;font-weight:600;}
+  .stage p{margin:0;color:#5B5140;font-size:0.94rem;}
+  .stage .tag{
+    font-family:var(--mono);
+    font-size:0.72rem;
+    color:var(--navy);
+    background:var(--sage-bg);
+    border:1px solid var(--sage);
+    padding:0.1rem 0.45rem;
+    border-radius:2px;
+    margin-left:0.5rem;
+  }
+
+  /* funnel */
+  .funnel{margin-top:1.6rem;}
+  .funnel-row{
+    display:grid;
+    grid-template-columns:9.5rem 1fr 5.5rem;
+    align-items:center;
+    gap:0.9rem;
+    margin-bottom:0.65rem;
+  }
+  .funnel-row .label{font-family:var(--mono);font-size:0.82rem;color:#5B5140;}
+  .funnel-bar-track{background:#E1D4B4;border-radius:2px;height:1.6rem;position:relative;overflow:hidden;}
+  .funnel-bar{
+    height:100%;
+    background:linear-gradient(90deg,var(--navy),var(--navy-soft));
+    border-radius:2px;
+  }
+  .funnel-row .count{font-family:var(--mono);font-weight:600;text-align:right;font-size:0.92rem;}
+  .funnel-drop{
+    font-family:var(--mono);
+    font-size:0.76rem;
+    color:var(--red);
+    margin:0 0 1.1rem 9.5rem;
+  }
+
+  /* decisions ledger */
+  .decision{
+    border-left:3px solid var(--gold);
+    padding:0.2rem 0 0.2rem 1rem;
+    margin-bottom:1.6rem;
+  }
+  .decision h3{margin:0 0 0.35rem;font-size:1.02rem;font-weight:600;}
+  .decision p{margin:0 0 0.5rem;color:#4B4232;font-size:0.94rem;}
+  .decision code{
+    background:#E7DCC5;
+    padding:0.1rem 0.35rem;
+    border-radius:2px;
+    font-family:var(--mono);
+    font-size:0.85em;
+  }
+  .decision .result{
+    font-family:var(--mono);
+    font-size:0.82rem;
+    color:var(--navy);
+    background:var(--sage-bg);
+    display:inline-block;
+    padding:0.15rem 0.5rem;
+    border-radius:2px;
+    border:1px solid var(--sage);
+  }
+
+  /* charts */
+  .chart-wrap{margin-top:1.2rem;}
+  .chart-caption{font-family:var(--mono);font-size:0.78rem;color:#7A7057;margin-top:0.6rem;}
+  svg text{font-family:var(--mono);}
+
+  /* terminal block */
+  .terminal{
+    background:var(--navy);
+    color:#CFE8CF;
+    font-family:var(--mono);
+    font-size:0.85rem;
+    padding:1.1rem 1.2rem;
+    border-radius:4px;
+    line-height:1.65;
+    overflow-x:auto;
+    margin:1.2rem 0;
+  }
+  .terminal .prompt{color:var(--gold);}
+  .terminal .ok{color:#8FD98F;}
+  .terminal .muted{color:#8296B8;}
+
+  /* checkpoint table */
+  table.checkpoints{width:100%;border-collapse:collapse;margin-top:1rem;font-size:0.9rem;}
+  table.checkpoints th{
+    text-align:left;font-family:var(--mono);font-weight:500;font-size:0.76rem;
+    color:#7A7057;padding:0.4rem 0.6rem;border-bottom:1px solid #D3C6A6;
+  }
+  table.checkpoints td{padding:0.55rem 0.6rem;border-bottom:1px solid #E7DCC5;}
+  table.checkpoints td.num{font-family:var(--mono);text-align:right;}
+  table.checkpoints tr td:first-child{font-weight:500;}
+  .pass{color:var(--sage);font-family:var(--mono);font-weight:600;}
+
+  /* footer links */
+  .links{
+    display:flex;flex-wrap:wrap;gap:0.9rem;margin-top:1.6rem;
+  }
+  .links a{
+    font-family:var(--mono);
+    font-size:0.85rem;
+    color:var(--parchment);
+    background:var(--navy);
+    padding:0.65rem 1.1rem;
+    border-radius:3px;
+    text-decoration:none;
+    border:1px solid var(--navy);
+  }
+  .links a:hover{background:var(--navy-soft);}
+  .links a.secondary{
+    background:transparent;color:var(--navy);border-color:var(--navy);
+  }
+  .links a.secondary:hover{background:var(--parchment-dim);}
+
+  footer{
+    background:var(--navy);color:#8296B8;text-align:center;
+    padding:2rem 1.5rem calc(2rem + env(safe-area-inset-bottom, 0px));
+    font-family:var(--mono);font-size:0.78rem;
+  }
+
+  @media (max-width:520px){
+    .funnel-row{grid-template-columns:6.2rem 1fr 4.2rem;}
+    .funnel-drop{margin-left:6.2rem;}
+  }
+
+  @media (prefers-reduced-motion:no-preference){
+    .funnel-bar{transition:width 0.6s ease;}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="cover-inner">
+    <p class="kicker">CAPSTONE PROJECT — TOPIC 24 · MEDIA, EDUCATION &amp; SPORT</p>
+    <h1>Student Performance &amp; Attendance</h1>
+    <p class="lede">A Bronze&nbsp;→&nbsp;Silver&nbsp;→&nbsp;Gold pipeline built in Databricks and staged into Snowflake, tracing exactly how attendance drives academic outcomes across 1,200 students, three semesters, and six subjects.</p>
+    <div class="meta-row">
+      <div>Rows landed<span>22,200</span></div>
+      <div>Rows in Gold<span>21,160</span></div>
+      <div>Rejected, with reason<span>560</span></div>
+      <div>Pipeline<span>5-task scheduled Job</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="page">
+    <h2 class="section-title"><span class="n">1</span>Pipeline</h2>
+    <p class="section-sub">Five stages, chained as dependent tasks in a scheduled Databricks Job, running unattended from raw generation through to a Snowflake-ready export.</p>
+    <ul class="stage-list">
+      <li class="stage">
+        <span class="num">01</span>
+        <div><h3>Generate</h3><p>Seeded synthetic dataset — 1,200 students × 3 semesters × 6 subjects, with defects injected for the pipeline to catch.</p></div>
+      </li>
+      <li class="stage">
+        <span class="num">02</span>
+        <div><h3>Bronze <span class="tag">land, don't clean</span></h3><p>Raw CSVs read as-is, every column a string, provenance columns added. Nothing altered.</p></div>
+      </li>
+      <li class="stage">
+        <span class="num">03</span>
+        <div><h3>Silver <span class="tag">decide &amp; log</span></h3><p><code>try_cast</code>, dedupe on the natural key, reject orphans and out-of-range rows with a named reason, derive attendance bands and semester ranks.</p></div>
+      </li>
+      <li class="stage">
+        <span class="num">04</span>
+        <div><h3>Gold</h3><p>One row per student × semester × subject, joined against student and subject dimensions — the shape that travels.</p></div>
+      </li>
+      <li class="stage">
+        <span class="num">05</span>
+        <div><h3>Export</h3><p>Coalesced to a single CSV, staged in Snowflake, loaded with <code>COPY INTO</code> — idempotency verified by re-running the same load.</p></div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="page">
+    <h2 class="section-title"><span class="n">2</span>Row-count trail</h2>
+    <p class="section-sub">Every row dropped is accounted for — nothing disappears without a reason.</p>
+
+    <div class="funnel">
+      <div class="funnel-row">
+        <span class="label">Bronze (raw)</span>
+        <div class="funnel-bar-track"><div class="funnel-bar" style="width:100%"></div></div>
+        <span class="count">22,200</span>
+      </div>
+
+      <div class="funnel-row">
+        <span class="label">After dedupe</span>
+        <div class="funnel-bar-track"><div class="funnel-bar" style="width:97.8%"></div></div>
+        <span class="count">21,720</span>
+      </div>
+      <p class="funnel-drop">− 480 duplicate (student_id, semester, subject_code)</p>
+
+      <div class="funnel-row">
+        <span class="label">Known students</span>
+        <div class="funnel-bar-track"><div class="funnel-bar" style="width:97.3%"></div></div>
+        <span class="count">21,600</span>
+      </div>
+      <p class="funnel-drop">− 120 unknown_student (orphan student_id)</p>
+
+      <div class="funnel-row">
+        <span class="label">Silver / Gold</span>
+        <div class="funnel-bar-track"><div class="funnel-bar" style="width:95.3%"></div></div>
+        <span class="count">21,160</span>
+      </div>
+      <p class="funnel-drop">− 440 attendance_over_100 + no_classes_held + marks_over_max</p>
+    </div>
+  </section>
+
+  <section class="page">
+    <h2 class="section-title"><span class="n">3</span>Silver decisions</h2>
+    <p class="section-sub">Four judgement calls, each logged rather than silently applied.</p>
+
+    <div class="decision">
+      <h3>try_cast, never cast — 'AB' becomes 0</h3>
+      <p>300 rows held the literal string <code>'AB'</code> in <code>internal_marks</code> — a genuinely absent assessment, not a zero score. <code>try_cast</code> turns it into <code>NULL</code>; <code>coalesce(..., 0)</code> makes it computable without hiding the absence.</p>
+      <span class="result">assert count = 300 → passed</span>
+    </div>
+
+    <div class="decision">
+      <h3>Dedupe on (student_id, semester, subject_code)</h3>
+      <p>Keyed on the natural business key, not the whole row — a resent record can carry an identical row with only a different ingestion timestamp.</p>
+      <span class="result">480 rows removed</span>
+    </div>
+
+    <div class="decision">
+      <h3>Orphans and range rejects, named</h3>
+      <p>unknown_student (anti-join), attendance_over_100, no_classes_held, marks_over_max — four named reasons, all preserved in <code>silver_rejects</code> rather than discarded.</p>
+      <span class="result">560 rows rejected, with reason</span>
+    </div>
+
+    <div class="decision">
+      <h3>Attendance band, completeness, and rank</h3>
+      <p>Bands derived from the unrounded percentage to avoid boundary misclassification. Rank computed only over students complete across all 6 subjects in a semester, so an incomplete record can't distort it.</p>
+      <span class="result">905 students complete in both sem 1 &amp; 2</span>
+    </div>
+  </section>
+
+  <section class="page">
+    <h2 class="section-title"><span class="n">4</span>Idempotency proof</h2>
+    <p class="section-sub">The load into Snowflake was run twice against the same staged file.</p>
+    <div class="terminal">
+<span class="prompt">›</span> COPY INTO GOLD_STUDENT_SUBJECT_SEM FROM @gold_stage ...<br>
+<span class="ok">✓ 21,160 rows loaded</span><br>
+<span class="muted">SELECT COUNT(*) FROM GOLD_STUDENT_SUBJECT_SEM;</span><br>
+<span class="ok">→ 21160</span><br><br>
+<span class="prompt">›</span> COPY INTO GOLD_STUDENT_SUBJECT_SEM FROM @gold_stage ...  <span class="muted">(run again, same file)</span><br>
+<span class="ok">✓ Copy executed with 0 files processed.</span>
+    </div>
+    <p class="section-sub" style="margin-top:0;">Snowflake's load metadata recognized the file had already been loaded and correctly skipped it — the load is safe to re-run without duplicating data.</p>
+  </section>
+
+  <section class="page">
+    <h2 class="section-title"><span class="n">5</span>Attendance drives marks — DBMS</h2>
+    <p class="section-sub">Average total marks by attendance band, shown for Database Systems as a representative example. The same rising pattern holds across all six subjects (full 24-row table in the write-up).</p>
+    <div class="chart-wrap">
+      <svg viewBox="0 0 640 220" width="100%" role="img" aria-label="Bar chart of average marks by attendance band for DBMS">
+        <!-- axis -->
+        <line x1="60" y1="180" x2="620" y2="180" stroke="#B7A97F" stroke-width="1"/>
+        <!-- bars: BELOW_60 43.3, BAND_60_74 48.0, BAND_75_84 53.0, BAND_85_100 57.4, scale max 65 -->
+        <g>
+          <rect x="90"  y="80.1"  width="90" height="99.9"  fill="#152238"></rect>
+          <rect x="230" y="69.2"  width="90" height="110.8" fill="#152238"></rect>
+          <rect x="370" y="57.7"  width="90" height="122.3" fill="#152238"></rect>
+          <rect x="510" y="47.5"  width="90" height="132.5" fill="#C9A66B"></rect>
+        </g>
+        <text x="135" y="72"  text-anchor="middle" font-size="13" fill="#2A2116">43.3</text>
+        <text x="275" y="61"  text-anchor="middle" font-size="13" fill="#2A2116">48.0</text>
+        <text x="415" y="50"  text-anchor="middle" font-size="13" fill="#2A2116">53.0</text>
+        <text x="555" y="40"  text-anchor="middle" font-size="13" fill="#2A2116">57.4</text>
+
+        <text x="135" y="200" text-anchor="middle" font-size="11" fill="#5B5140">BELOW_60</text>
+        <text x="275" y="200" text-anchor="middle" font-size="11" fill="#5B5140">60–74</text>
+        <text x="415" y="200" text-anchor="middle" font-size="11" fill="#5B5140">75–84</text>
+        <text x="555" y="200" text-anchor="middle" font-size="11" fill="#5B5140">85–100</text>
+      </svg>
+      <p class="chart-caption">avg(total_marks) by attendance_band — GOLD_STUDENT_SUBJECT_SEM, subject_code = 'DBMS'</p>
+    </div>
+  </section>
+
+  <section class="page">
+    <h2 class="section-title"><span class="n">6</span>Correlation by subject</h2>
+    <p class="section-sub">CORR(attendance_pct, total_marks), grouped by subject. Continuous-assessment subjects show the strongest relationship; lecture-only subjects the weakest.</p>
+    <div class="chart-wrap">
+      <svg viewBox="0 0 640 300" width="100%" role="img" aria-label="Bar chart of attendance-to-marks correlation by subject">
+        <line x1="140" y1="10" x2="140" y2="270" stroke="#B7A97F" stroke-width="1"/>
+        <!-- horizontal bars, max 0.7 scale to 460px -->
+        <g font-size="13" fill="#2A2116">
+          <rect x="140" y="15"  width="433" height="30" fill="#152238"/>
+          <text x="583" y="35">0.659</text>
+          <text x="130" y="35" text-anchor="end" fill="#5B5140">PROG</text>
+
+          <rect x="140" y="55"  width="397" height="30" fill="#152238"/>
+          <text x="547" y="75">0.604</text>
+          <text x="130" y="75" text-anchor="end" fill="#5B5140">MATH</text>
+
+          <rect x="140" y="95"  width="319" height="30" fill="#1E304C"/>
+          <text x="469" y="115">0.486</text>
+          <text x="130" y="115" text-anchor="end" fill="#5B5140">DBMS</text>
+
+          <rect x="140" y="135" width="265" height="30" fill="#1E304C"/>
+          <text x="415" y="155">0.403</text>
+          <text x="130" y="155" text-anchor="end" fill="#5B5140">PHYS</text>
+
+          <rect x="140" y="175" width="103" height="30" fill="#A83232"/>
+          <text x="253" y="195">0.156</text>
+          <text x="130" y="195" text-anchor="end" fill="#5B5140">ENGL</text>
+
+          <rect x="140" y="215" width="75"  height="30" fill="#A83232"/>
+          <text x="225" y="235">0.114</text>
+          <text x="130" y="235" text-anchor="end" fill="#5B5140">WORK</text>
+        </g>
+      </svg>
+      <p class="chart-caption">Higher-beta subjects (practice-weighted) correlate more strongly with attendance than lecture-only subjects.</p>
+    </div>
+  </section>
+
+  <section class="page">
+    <h2 class="section-title"><span class="n">7</span>Checkpoint verification</h2>
+    <p class="section-sub">Numeric checkpoints named in the project brief, reproduced against the actual Gold data.</p>
+    <table class="checkpoints">
+      <thead><tr><th>Checkpoint</th><th>Expected</th><th>Actual</th></tr></thead>
+      <tbody>
+        <tr><td>Bronze row count</td><td class="num">22,200</td><td class="num pass">22,200</td></tr>
+        <tr><td>Silver / Gold row count</td><td class="num">21,160</td><td class="num pass">21,160</td></tr>
+        <tr><td>Complete in both semesters 1 &amp; 2</td><td class="num">905</td><td class="num pass">905</td></tr>
+        <tr><td>Of those, penalty students (id % 8 = 3)</td><td class="num">114</td><td class="num pass">114</td></tr>
+        <tr><td>Penalty students who fell in semester 2</td><td class="num">&gt; 90</td><td class="num pass">109</td></tr>
+        <tr><td>Students with a 20+ rank jump, sem 1→2</td><td class="num">—</td><td class="num pass">934</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="page">
+    <h2 class="section-title"><span class="n">8</span>Project files</h2>
+    <p class="section-sub">Full notebooks, SQL, exports, and the detailed write-up live in the repository below.</p>
+    <div class="links">
+      <a href="https://github.com/mpreetam07/capstone-student-performance-pipeline" id="github-link">GitHub repository</a>
+      <a href="https://drive.google.com/drive/folders/1PVgmkqXbgbf6REEMH4jEIhCU03y4ts-d?usp=sharing" class="secondary" id="drive-link">Google Drive folder</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Capstone Project — Topic 24 · Student Performance &amp; Attendance · Databricks + Snowflake
+</footer>
+
+</body>
+</html>
